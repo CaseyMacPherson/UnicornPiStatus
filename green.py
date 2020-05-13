@@ -6,7 +6,7 @@ import unicornhat as unicorn
 
 unicorn.set_layout(unicorn.AUTO)
 unicorn.rotation(0)
-unicorn.brightness(0.5)
+unicorn.brightness(0.4)
 width,height=unicorn.get_shape()
 
 
