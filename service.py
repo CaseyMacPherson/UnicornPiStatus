@@ -1,7 +1,12 @@
-import paho.mqtt.client as mqtt import os import threading import logging import time import unicornhat as unicorn
+import paho.mqtt.client as mqtt
+import os
+import threading
+import logging
+import time
+import unicornhat as unicorn
 
 class SharedContext:
-  current_color = "green"
+  current_color = "off"
 
 shared_context = SharedContext()
 
@@ -38,7 +43,6 @@ def do_light_thing(context):
       unicorn.clear()
       unicorn.show()
     time.sleep(1.0)
-    print("shared_context " + context.current_color)
 
 if __name__ == "__main__":
 
@@ -47,6 +51,7 @@ if __name__ == "__main__":
   client.on_message = on_message
 
   light_thread = threading.Thread(target=do_light_thing, args=(shared_context,))
+  light_thread.daemon = True
   light_thread.start()
 
   mqtthost = os.environ.get("MQTT_HOST")
