@@ -11,15 +11,26 @@ class SharedContext:
 
 shared_context = SharedContext()
 
+homeassistant_advertisement_topic = "homeassistant/light/pistatus/config"
+state_topic = "homeassistant/pistatus/light/status"
+command_topic = "homeassistant/pistatus/light/switch"
+brightness_state_topic = "homeassistant/pistatus/light/brightness"
+brightness_command_topic = "homeassistant/pistatus/light/brightness/set"
+rgb_state_topic = "homeassistant/pistatus/light/rgb/status"
+rgb_command_topic = "homeassistant/pistatus/light/rgb/set"
+
+
 
 def on_connect(client, userdata, flags, rc):
   print("Connected with result code "+str(rc))
-  
+
   if rc == 0:
-    client.subscribe("homeassistant/pistatus/light/status")
-    client.subscribe("homeassistant/pistatus/light/switch")
-    client.subscribe("homeassistant/pistatus/light/brightness")
-    client.subscribe("homeassistant/pistatus/light/brightness/set")
+    client.subscribe(state_topic)
+    client.subscribe(command_topic)
+    client.subscribe(brightness_state_topic)
+    client.subscribe(brightness_command_topic)
+    client.subscribe(rgb_state_topic)
+    client.subscribe(rgb_command_topic)
 
     do_mqtt_advertisement(client)
 
@@ -29,18 +40,23 @@ def on_message(client, userdata, msg):
 
 def do_mqtt_advertisement(client):
   config = {
-    "name" : "pistatus",
+    "name" : "Work Light",
     "payload_on" : "ON",
     "payload_off" : "OFF",
     "qos" : 0,
     "optimistic" : False,
-    "state_topic" : "pistatus/light/status",
-    "command_topic" : "pistatus/light/switch",
-    "brightness_state_topic" : "pistatus/light/brightness",
-    "brightness_command_topic" : "pistatus/light/brightness/set"
+    "state_topic" : state_topic,
+    "command_topic" : command_topic,
+    "brightness_state_topic" : brightness_state_topic,
+    "brightness_command_topic" : brightness_command_topic,
+    "rgb_state_topic" : rgb_state_topic,
+    "rgb_command_topic" : rgb_command_topic,
+    "rgb_value_template" : "{{ value_json.rgb | join (',') }}",
+    "brightness_value_template" : "{{ value_json.brightness }}",
+    "state_value_template" : "{{ value_json.state }}"
   }
 
-  client.publish("homeassistant/light/pistatus/config",json.dumps(config))
+  client.publish(homeassistant_advertisement_topic,json.dumps(config))
 
 def set_color(r,g,b):
   width,height=unicorn.get_shape()
