@@ -3,7 +3,7 @@ import os
 import threading
 import logging
 import time
-import unicornhat as unicorn
+import unicornhathd as unicorn
 
 class SharedContext:
   current_color = "off"
@@ -39,10 +39,12 @@ def do_light_thing(context):
       set_color(255,0,0)
     elif context.current_color == "blue" :
       set_color(0,0,255)
+    elif context.current_color == "yellow" :
+      set_color(255,255,0)
     else:
       unicorn.clear()
       unicorn.show()
-    time.sleep(1.0)
+    time.sleep(0.05)
 
 if __name__ == "__main__":
 
